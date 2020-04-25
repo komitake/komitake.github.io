@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <title>H30沖縄県知事選挙</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['table', 'corechart', 'sankey']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      // 年代別の有権者数と投票率: https://www.pref.okinawa.jp/site/senkan_i/tohyoritsu.html
+      // 年代別・候補者別の得票率: https://www.asahi.com/articles/photo/AS20181017001817.html
+      var rawData = [ // 年代, 佐喜眞淳, 玉城デニー, 棄権
+        ['18〜29歳', 5331, 4527, 12141],
+        ['30代', 6520, 7213, 10340],
+        ['40代', 7165, 9895, 8986],
+        ['50代', 6543, 9815, 6297],
+        ['60代', 6995, 12791, 6026],
+        ['70代以上', 6676, 11826, 10016]
+      ]
+
+      function drawChart() {
+        var tableData = new google.visualization.DataTable();
+        tableData.addColumn('string', '年代');
+        tableData.addColumn('number', '佐喜眞淳');
+        tableData.addColumn('number', '玉城デニー');
+        tableData.addColumn('number', '棄権');
+        tableData.addRows(rawData);
+
+        var sanKeyData = new google.visualization.DataTable();
+        sanKeyData.addColumn('string', '年代');
+        sanKeyData.addColumn('string', '投票先');
+        sanKeyData.addColumn('number', '得票数');
+        rawData.forEach(values => {
+          sanKeyData.addRows([
+            [ values[0], '佐喜眞淳', values[1] ],
+            [ values[0], '玉城デニー', values[2] ],
+            [ values[0], '棄権', values[3] ],
+          ]);
+        });
+        var sanKeyOptions = {
+          width: 600,
+        };
+        var sanKeyChart = new google.visualization.Sankey(document.getElementById('sankey'));
+        sanKeyChart.draw(sanKeyData, sanKeyOptions);
+
+        var barOptions = {
+          width: 600,
+          height: 300,
+          bars: 'horizontal',
+          legend: { position: 'top', maxLines: 3 },
+          bar: { groupWidth: '75%' },
+          isStacked: true
+        };
+        var barChart = new google.visualization.BarChart(document.getElementById('bar_stack'));
+        barChart.draw(tableData, barOptions);
+
+        var table = new google.visualization.Table(document.getElementById('table'));
+        table.draw(tableData, {showRowNumber: true, width: '100%', height: '100%'});
+      }
+    </script>
+  </head>
+  <body>
+    <h1>H30沖縄県知事選挙の結果</h1>
+    <div id="sankey" style="width: 600px; height: 300px;"></div>
+    <div id="bar_stack" style="width: 600px; height: 300px;"></div>
+    <div id="table" style="width: 600px; height: 300px;"></div>
+    <div>
+      データ
+      <ul>
+        <li>年代別の有権者数と投票率: <a href="https://www.pref.okinawa.jp/site/senkan_i/tohyoritsu.html">https://www.pref.okinawa.jp/site/senkan_i/tohyoritsu.html</a></li>
+        <li>年代別・候補者別の得票率: <a href="https://www.asahi.com/articles/photo/AS20181017001817.html">https://www.asahi.com/articles/photo/AS20181017001817.html</a></li>
+      </ul>
+    </div>
+  </body>
+</html>
